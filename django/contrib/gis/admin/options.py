@@ -1,9 +1,10 @@
-from django.contrib.admin import ModelAdmin
+from django.contrib import admin
 from django.contrib.gis.admin.widgets import OpenLayersWidget
 from django.contrib.gis.gdal import OGRGeomType
 from django.contrib.gis.db import models
 
-class GeoModelAdmin(ModelAdmin):
+
+class GeoAdminMixin(object):
     """
     The administration options class for Geographic models. Map settings
     may be overloaded from their defaults to create custom maps.
@@ -42,7 +43,7 @@ class GeoModelAdmin(ModelAdmin):
     @property
     def media(self):
         "Injects OpenLayers JavaScript into the admin."
-        media = super(GeoModelAdmin, self).media
+        media = super(GeoAdminMixin, self).media
         media.add_js([self.openlayers_url])
         media.add_js(self.extra_js)
         return media
@@ -58,7 +59,7 @@ class GeoModelAdmin(ModelAdmin):
             kwargs['widget'] = self.get_map_widget(db_field)
             return db_field.formfield(**kwargs)
         else:
-            return super(GeoModelAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+            return super(GeoAdminMixin, self).formfield_for_dbfield(db_field, **kwargs)
 
     def get_map_widget(self, db_field):
         """
@@ -109,6 +110,19 @@ class GeoModelAdmin(ModelAdmin):
                       'debug' : self.debug,
                       }
         return OLMap
+
+
+class GeoModelAdmin(GeoAdminMixin, admin.ModelAdmin):
+  pass
+
+
+class GeoStackedInline(GeoAdminMixin, admin.StackedInline):
+  pass
+
+
+class GeoTabularInline(GeoAdminMixin, admin.TabularInline):
+  pass
+
 
 from django.contrib.gis import gdal
 if gdal.HAS_GDAL:

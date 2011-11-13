@@ -2,7 +2,8 @@
 from django.contrib.admin import autodiscover, site, AdminSite, ModelAdmin, StackedInline, TabularInline, HORIZONTAL, VERTICAL
 
 # Geographic admin options classes and widgets.
-from django.contrib.gis.admin.options import GeoModelAdmin
+from django.contrib.gis.admin.options import (GeoModelAdmin, GeoStackedInline,
+                                              GeoTabularInline)
 from django.contrib.gis.admin.widgets import OpenLayersWidget
 
 try:
